@@ -17,30 +17,53 @@ const getOverview = async (req, res, next) => {
       weekly: [],
     }
 
+    // Use Promise.allSettled to handle partial failures
+    const tasks = []
+
     if (user.githubUsername) {
-      overview.github = await getGitHubSummary(user.githubUsername)
-      overview.weekly = await getGitHubWeeklyProgress(user.githubUsername)
+      tasks.push(
+        getGitHubSummary(user.githubUsername)
+          .then(async (summary) => {
+            overview.github = summary
+            overview.weekly = await getGitHubWeeklyProgress(user.githubUsername, summary.events)
+          })
+          .catch((err) => console.error('GitHub fetch error:', err.message))
+      )
     }
 
     if (user.leetcodeUsername) {
-      overview.leetcode = await getLeetCodeSummary(user.leetcodeUsername)
+      tasks.push(
+        getLeetCodeSummary(user.leetcodeUsername)
+          .then((stats) => {
+            overview.leetcode = stats
+          })
+          .catch((err) => console.error('LeetCode fetch error:', err.message))
+      )
     }
 
-    await Stats.findOneAndUpdate(
-      { user: req.user.id },
-      {
-        githubCommits: overview.github?.commits || 0,
-        leetcodeSolved: overview.leetcode?.solved || 0,
-        weeklyProgress: overview.weekly,
-      },
-      { new: true, upsert: true }
-    )
+    await Promise.all(tasks)
+
+    // Update stats record if possible, but don't block if it fails
+    try {
+      await Stats.findOneAndUpdate(
+        { user: req.user.id },
+        {
+          githubCommits: overview.github?.commits || 0,
+          leetcodeSolved: overview.leetcode?.solved || 0,
+          weeklyProgress: overview.weekly,
+        },
+        { new: true, upsert: true }
+      )
+    } catch (dbError) {
+      console.error('Database update error:', dbError.message)
+    }
 
     res.json({ overview })
   } catch (error) {
     next(error)
   }
 }
+
 
 const getGitHubStats = async (req, res, next) => {
   try {

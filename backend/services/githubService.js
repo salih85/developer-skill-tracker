@@ -114,8 +114,39 @@ const getGitHubWeeklyProgress = async (username, existingEvents = null) => {
   return buildWeeklyArray(events)
 }
 
+const getGitHubYearlyStats = async (username) => {
+  const currentYear = new Date().getFullYear()
+  const lastYear = currentYear - 1
+
+  const fetchYearlyCount = async (year) => {
+    const response = await fetch(
+      `https://api.github.com/search/commits?q=author:${username}+author-date:${year}-01-01..${year}-12-31`,
+      {
+        headers: {
+          ...getGitHubHeaders(),
+          Accept: 'application/vnd.github.cloak-preview',
+        },
+      }
+    )
+    const data = await response.json()
+    return data.total_count || 0
+  }
+
+  const [count2026, count2025] = await Promise.all([
+    fetchYearlyCount(2026),
+    fetchYearlyCount(2025),
+  ])
+
+  return {
+    2026: count2026,
+    2025: count2025,
+  }
+}
+
 module.exports = {
   getGitHubSummary,
   getGitHubWeeklyProgress,
+  getGitHubYearlyStats,
 }
+
 

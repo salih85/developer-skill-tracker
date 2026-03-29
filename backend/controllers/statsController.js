@@ -95,8 +95,36 @@ const getLeetCodeStats = async (req, res, next) => {
   }
 }
 
+const { getGitHubSummary, getGitHubWeeklyProgress, getGitHubYearlyStats } = require('../services/githubService')
+
+const getDetailedGitHubStats = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id)
+    if (!user || !user.githubUsername) {
+      res.status(404)
+      throw new Error('GitHub profile not configured')
+    }
+
+    const [summary, weekly, yearly] = await Promise.all([
+      getGitHubSummary(user.githubUsername),
+      getGitHubWeeklyProgress(user.githubUsername),
+      getGitHubYearlyStats(user.githubUsername),
+    ])
+
+    res.json({
+      summary,
+      weekly,
+      yearly,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   getOverview,
   getGitHubStats,
   getLeetCodeStats,
+  getDetailedGitHubStats,
 }
+

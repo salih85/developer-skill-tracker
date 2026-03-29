@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Sidebar from '../components/Sidebar.jsx'
 import Chart from '../components/Chart.jsx'
+import CommitModal from '../components/CommitModal.jsx' // [NEW]
 import { useAuth } from '../context/AuthContext.jsx'
 import { getOverview, getGoals } from '../services/api.js'
 import { formatNumber } from '../utils/formatData.js'
@@ -11,6 +12,7 @@ const Dashboard = () => {
   const [overview, setOverview] = useState(null)
   const [goals, setGoals] = useState([])
   const [error, setError] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false) // [NEW]
 
   useEffect(() => {
     if (!token) return
@@ -28,7 +30,6 @@ const Dashboard = () => {
 
     loadData()
   }, [token])
-
 
   const github = overview?.github
   const leetcode = overview?.leetcode
@@ -49,7 +50,7 @@ const Dashboard = () => {
         {error && <div className="page-error">{error}</div>}
 
         <section className="metric-grid">
-          <div className="metric-card">
+          <div className="metric-card clickable" onClick={() => setIsModalOpen(true)}>
             <h3>GitHub commits</h3>
             <p>{formatNumber(github?.commits || 0)}</p>
             <span>{github?.username || 'No GitHub connected'}</span>
@@ -96,9 +97,16 @@ const Dashboard = () => {
             )}
           </div>
         </section>
+        
+        <CommitModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          token={token} 
+        />
       </div>
     </div>
   )
 }
 
 export default Dashboard
+

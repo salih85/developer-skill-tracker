@@ -1,7 +1,8 @@
 const User = require('../models/User')
 const Stats = require('../models/Stats')
-const { getGitHubSummary, getGitHubWeeklyProgress } = require('../services/githubService')
+const { getGitHubSummary, getGitHubWeeklyProgress, getGitHubYearlyStats } = require('../services/githubService')
 const { getLeetCodeSummary } = require('../services/leetcodeService')
+
 
 const getOverview = async (req, res, next) => {
   try {
@@ -95,8 +96,6 @@ const getLeetCodeStats = async (req, res, next) => {
   }
 }
 
-const { getGitHubSummary, getGitHubWeeklyProgress, getGitHubYearlyStats } = require('../services/githubService')
-
 const getDetailedGitHubStats = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id)
@@ -105,21 +104,33 @@ const getDetailedGitHubStats = async (req, res, next) => {
       throw new Error('GitHub profile not configured')
     }
 
-    const [summary, weekly, yearly] = await Promise.all([
-      getGitHubSummary(user.githubUsername),
-      getGitHubWeeklyProgress(user.githubUsername),
-      getGitHubYearlyStats(user.githubUsername),
-    ])
+    const results = {
+      summary: null,
+      weekly: [],
+      yearly: { 2025: 0, 2026: 0 },
+    }
 
-    res.json({
-      summary,
-      weekly,
-      yearly,
-    })
+    // Fetch summary first to get events if possible
+    try {
+      results.summary = await getGitHubSummary(user.githubUsername)
+      results.weekly = await getGitHubWeeklyProgress(user.githubUsername, results.summary.events)
+    } catch (e) {
+      console.error('Summary/Weekly fetch error:', e.message)
+    }
+
+    // Fetch yearly separately
+    try {
+      results.yearly = await getGitHubYearlyStats(user.githubUsername)
+    } catch (e) {
+      console.error('Yearly fetch error:', e.message)
+    }
+
+    res.json(results)
   } catch (error) {
     next(error)
   }
 }
+
 
 module.exports = {
   getOverview,

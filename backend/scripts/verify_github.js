@@ -1,4 +1,4 @@
-const { getGitHubWeeklyProgress } = require('./backend/services/githubService');
+const { getGitHubWeeklyProgress } = require('../services/githubService');
 
 async function verify() {
     console.log('--- Verifying buildWeeklyArray Logic ---');

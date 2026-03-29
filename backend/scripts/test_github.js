@@ -1,7 +1,8 @@
-const { getGitHubSummary, getGitHubWeeklyProgress } = require('./backend/services/githubService');
+const { getGitHubSummary, getGitHubWeeklyProgress } = require('../services/githubService');
 
 async function test() {
-    const username = 'octocat'; // Using octocat as a test case
+    const username = 'salih85'; // Using salih85 for verification
+
     try {
         console.log('Fetching summary for:', username);
         const summary = await getGitHubSummary(username);

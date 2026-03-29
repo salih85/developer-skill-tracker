@@ -39,7 +39,12 @@ const buildWeeklyArray = (events) => {
       const dateKey = event.created_at.slice(0, 10)
       const day = days.find((item) => item.key === dateKey)
       if (day) {
-        day.count += event.payload.commits?.length || 0
+        // Fallback: if size or commits are missing, count as 1 push = at least 1 commit
+        const commitCount = event.payload.size || 
+                           event.payload.distinct_size || 
+                           event.payload.commits?.length || 
+                           1
+        day.count += commitCount
       }
     })
   }
@@ -68,7 +73,12 @@ const getGitHubSummary = async (username) => {
   const commits = Array.isArray(events) 
     ? events.reduce((total, event) => {
         if (event.type !== 'PushEvent') return total
-        return total + (event.payload.commits?.length || 0)
+        // Fallback here too
+        const commitCount = event.payload.size || 
+                           event.payload.distinct_size || 
+                           event.payload.commits?.length || 
+                           1
+        return total + commitCount
       }, 0)
     : 0
 
@@ -82,6 +92,7 @@ const getGitHubSummary = async (username) => {
     events: Array.isArray(events) ? events : [], // Keep events for weekly progress if needed
   }
 }
+
 
 const getGitHubWeeklyProgress = async (username, existingEvents = null) => {
   let events = existingEvents

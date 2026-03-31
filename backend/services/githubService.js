@@ -84,13 +84,41 @@ const getGitHubSummary = async (username) => {
 
   return {
     username: profile.login,
+    name: profile.name || profile.login,
     avatar: profile.avatar_url,
     repos: profile.public_repos,
     followers: profile.followers,
+    following: profile.following,
     bio: profile.bio || '',
+    location: profile.location || '',
+    blog: profile.blog || '',
     commits,
     events: Array.isArray(events) ? events : [], // Keep events for weekly progress if needed
   }
+}
+
+const getGitHubTopRepos = async (username) => {
+  const response = await fetch(
+    `https://api.github.com/users/${username}/repos?sort=updated&per_page=6`,
+    {
+      headers: getGitHubHeaders(),
+    }
+  )
+  const repos = await response.json()
+
+  if (!response.ok) {
+    throw new Error(repos.message || 'Unable to load GitHub repositories')
+  }
+
+  return repos.map((repo) => ({
+    name: repo.name,
+    description: repo.description,
+    stars: repo.stargazers_count,
+    forks: repo.forks_count,
+    language: repo.language,
+    url: repo.html_url,
+    updated_at: repo.updated_at,
+  }))
 }
 
 
@@ -147,6 +175,7 @@ module.exports = {
   getGitHubSummary,
   getGitHubWeeklyProgress,
   getGitHubYearlyStats,
+  getGitHubTopRepos,
 }
 
 

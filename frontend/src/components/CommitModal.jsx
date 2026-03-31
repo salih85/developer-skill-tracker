@@ -23,46 +23,76 @@ const CommitModal = ({ isOpen, onClose, token }) => {
     }
   }, [isOpen, token])
 
+  const getLevel = (count) => {
+    if (count === 0) return 0
+    if (count < 3) return 1
+    if (count < 6) return 2
+    if (count < 10) return 3
+    return 4
+  }
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="GitHub Commit Details">
+    <Modal isOpen={isOpen} onClose={onClose} title="GitHub Profile Stats">
       {loading && <div className="modal-loader">Loading detailed stats...</div>}
       {error && <div className="modal-error">{error}</div>}
       {data && (
-        <div className="commit-details">
-          <div className="stats-row">
-            <div className="stat-box">
-              <span className="stat-label">Total Commits (Last 100 events)</span>
-              <span className="stat-value">{formatNumber(data.summary.commits)}</span>
+        <div className="github-modal-content">
+          <div className="gh-profile-header">
+            <img src={data.summary.avatar} alt={data.summary.username} className="gh-avatar" />
+            <div className="gh-user-info">
+              <h2>{data.summary.name}</h2>
+              <p>@{data.summary.username}</p>
+              {data.summary.bio && <p className="gh-bio">{data.summary.bio}</p>}
             </div>
           </div>
-          <div className="yearly-stats">
-            <h3>Yearly Overview</h3>
-            <div className="stats-grid">
-              <div className="stat-item highlighted">
-                <span className="year">2026</span>
-                <span className="count">{formatNumber(data.yearly['2026'])}</span>
-                <small>Commits</small>
-              </div>
-              <div className="stat-item">
-                <span className="year">2025</span>
-                <span className="count">{formatNumber(data.yearly['2025'])}</span>
-                <small>Commits</small>
-              </div>
+
+          <div className="gh-stats-row">
+            <div className="gh-stat-card">
+              <span className="label">Repositories</span>
+              <span className="value">{formatNumber(data.summary.repos)}</span>
+            </div>
+            <div className="gh-stat-card">
+              <span className="label">Followers</span>
+              <span className="value">{formatNumber(data.summary.followers)}</span>
+            </div>
+            <div className="gh-stat-card">
+              <span className="label">Following</span>
+              <span className="value">{formatNumber(data.summary.following)}</span>
             </div>
           </div>
-          <div className="recent-activity">
-            <h3>Recent Highlights</h3>
-            <div className="activity-list">
-              {data.summary.events?.slice(0, 5).map((event) => (
-                <div key={event.id} className="activity-item">
-                  <div className="activity-dot" />
-                  <div className="activity-content">
-                    <strong>{event.type}</strong> in {event.repo.name}
-                    <p>{new Date(event.created_at).toLocaleString()}</p>
-                  </div>
+
+          <div className="gh-section-title">
+            <span>Weekly Activity</span>
+          </div>
+          <div className="gh-heatmap">
+            {data.weekly.map((day, idx) => (
+              <div key={idx} className="gh-day">
+                <span className="gh-day-label">{day.date}</span>
+                <div 
+                  className={`gh-day-box gh-level-${getLevel(day.count)}`} 
+                  title={`${day.count} commits on ${day.date}`}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="gh-section-title">
+            <span>Top Repositories</span>
+          </div>
+          <div className="gh-repos-grid">
+            {data.repos.map((repo, idx) => (
+              <a key={idx} href={repo.url} target="_blank" rel="noopener noreferrer" className="gh-repo-card">
+                <h4>{repo.name}</h4>
+                {repo.description && <p>{repo.description}</p>}
+                <div className="gh-repo-meta">
+                  {repo.language && (
+                    <span>● {repo.language}</span>
+                  )}
+                  <span>★ {formatNumber(repo.stars)}</span>
+                  <span>forks {formatNumber(repo.forks)}</span>
                 </div>
-              ))}
-            </div>
+              </a>
+            ))}
           </div>
         </div>
       )}

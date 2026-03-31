@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const Stats = require('../models/Stats')
-const { getGitHubSummary, getGitHubWeeklyProgress, getGitHubYearlyStats } = require('../services/githubService')
+const { getGitHubSummary, getGitHubWeeklyProgress, getGitHubYearlyStats, getGitHubTopRepos } = require('../services/githubService')
 const { getLeetCodeSummary } = require('../services/leetcodeService')
 
 
@@ -108,6 +108,7 @@ const getDetailedGitHubStats = async (req, res, next) => {
       summary: null,
       weekly: [],
       yearly: { 2025: 0, 2026: 0 },
+      repos: [],
     }
 
     // Fetch summary first to get events if possible
@@ -123,6 +124,13 @@ const getDetailedGitHubStats = async (req, res, next) => {
       results.yearly = await getGitHubYearlyStats(user.githubUsername)
     } catch (e) {
       console.error('Yearly fetch error:', e.message)
+    }
+
+    // Fetch top repos
+    try {
+      results.repos = await getGitHubTopRepos(user.githubUsername)
+    } catch (e) {
+      console.error('Top repos fetch error:', e.message)
     }
 
     res.json(results)

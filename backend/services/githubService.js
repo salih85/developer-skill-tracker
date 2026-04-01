@@ -60,6 +60,20 @@ const getGitHubSummary = async (username) => {
     throw new Error(profile.message || 'GitHub profile not found')
   }
 
+  // Fetch current year commit count from Search API for accuracy
+  const currentYear = new Date().getFullYear()
+  const searchResponse = await fetch(
+    `https://api.github.com/search/commits?q=author:${username}+author-date:${currentYear}-01-01..${currentYear}-12-31`,
+    {
+      headers: {
+        ...getGitHubHeaders(),
+        Accept: 'application/vnd.github.cloak-preview',
+      },
+    }
+  )
+  const searchData = await searchResponse.json()
+  const yearlyCommits = searchData.total_count || 0
+
   const eventsResponse = await fetch(
     `https://api.github.com/users/${username}/events/public?per_page=100`,
     {
@@ -67,17 +81,6 @@ const getGitHubSummary = async (username) => {
     }
   )
   const events = await eventsResponse.json()
-
-  const commits = Array.isArray(events) 
-    ? events.reduce((total, event) => {
-        if (event.type !== 'PushEvent') return total
-        const commitCount = event.payload.size || 
-                           event.payload.distinct_size || 
-                           event.payload.commits?.length || 
-                           1
-        return total + commitCount
-      }, 0)
-    : 0
 
   return {
     username: profile.login,
@@ -91,7 +94,7 @@ const getGitHubSummary = async (username) => {
     blog: profile.blog || '',
     company: profile.company || '',
     created_at: profile.created_at,
-    commits,
+    commits: yearlyCommits, // Use total commits for current year
     events: Array.isArray(events) ? events : [],
   }
 }

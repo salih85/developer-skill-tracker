@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Sidebar from '../components/Sidebar.jsx'
 import Chart from '../components/Chart.jsx'
-import CommitModal from '../components/CommitModal.jsx' // [NEW]
+import CommitModal from '../components/CommitModal.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { getOverview, getGoals } from '../services/api.js'
+import { getOverview, getGoals, createGoal } from '../services/api.js'
 import { formatNumber } from '../utils/formatData.js'
 
 const Dashboard = () => {
@@ -12,48 +12,97 @@ const Dashboard = () => {
   const [overview, setOverview] = useState(null)
   const [goals, setGoals] = useState([])
   const [error, setError] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false) // [NEW]
+  const [success, setSuccess] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // Goal Center state
+  const [newGoal, setNewGoal] = useState({ title: '', target: '' })
+  const [isAdding, setIsAdding] = useState(false)
+
+  const loadData = async () => {
+    try {
+      const result = await getOverview(token)
+      setOverview(result.overview)
+      const savedGoals = await getGoals(token)
+      setGoals(savedGoals)
+    } catch (err) {
+      setError(err.message)
+    }
+  }
 
   useEffect(() => {
     if (!token) return
-
-    const loadData = async () => {
-      try {
-        const result = await getOverview(token)
-        setOverview(result.overview)
-        const savedGoals = await getGoals(token)
-        setGoals(savedGoals)
-      } catch (err) {
-        setError(err.message)
-      }
-    }
-
     loadData()
   }, [token])
+
+  const handleAddGoal = async (e) => {
+    e.preventDefault()
+    if (!newGoal.title || !newGoal.target) return
+    
+    setIsAdding(true)
+    try {
+      await createGoal(token, { ...newGoal, progress: 0 })
+      setNewGoal({ title: '', target: '' })
+      setSuccess('Goal added successfully!')
+      loadData()
+      setTimeout(() => setSuccess(''), 3000)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsAdding(false)
+    }
+  }
 
   const github = overview?.github
   const leetcode = overview?.leetcode
   const weekly = overview?.weekly || []
+
+  // Developer Level Calculation
+  const totalCommits = github?.commits || 0
+  const leetcodeSolved = leetcode?.solved || 0
+  const totalPoints = (totalCommits * 2) + (leetcodeSolved * 10)
+  const level = Math.floor(totalPoints / 100) + 1
+  const nextLevelPoints = level * 100
+  const progressToNext = (totalPoints % 100)
+
+  const getRankTitle = (lvl) => {
+    if (lvl < 5) return 'Junior Dev'
+    if (lvl < 10) return 'Solid Contributor'
+    if (lvl < 20) return 'Senior Architect'
+    return 'Fullstack Legend'
+  }
 
   return (
     <div className="page-layout">
       <Sidebar />
       <div className="main-panel">
         <Navbar />
-        <section className="dashboard-hero">
-          <div>
-            <h1>Welcome back, {user?.name || 'Developer'}.</h1>
-            <p>Sync your GitHub and LeetCode stats, review weekly progress, and stay on track with your goals.</p>
+        
+        <header className="dash-premium-header">
+          <div className="header-left">
+            <h1>Engine Room</h1>
+            <p>Welcome back, <strong>{user?.name || 'Developer'}</strong>. Your systems are nominal.</p>
           </div>
-        </section>
+          <div className="header-level-card">
+            <div className="level-info">
+              <span className="level-num">Lvl {level}</span>
+              <span className="level-title">{getRankTitle(level)}</span>
+            </div>
+            <div className="level-progress-bar">
+              <div className="level-fill" style={{ width: `${progressToNext}%` }}></div>
+            </div>
+            <small>{nextLevelPoints - (totalPoints % 100)} pts to next level</small>
+          </div>
+        </header>
 
         {error && <div className="page-error">{error}</div>}
+        {success && <div className="info-message">{success}</div>}
 
         <section className="metric-grid">
           <div className="metric-card clickable gh-card-premium" onClick={() => setIsModalOpen(true)}>
             <div className="card-icon">🚀</div>
             <h3>GitHub Activity</h3>
-            <p>{formatNumber(github?.commits || 0)}</p>
+            <p>{formatNumber(totalCommits)}</p>
             <div className="card-footer">
               <span>{github?.username || 'No GitHub connected'}</span>
               <small>View Insights →</small>
@@ -62,46 +111,104 @@ const Dashboard = () => {
           <div className="metric-card">
             <div className="card-icon">🧩</div>
             <h3>LeetCode fixed</h3>
-            <p>{formatNumber(leetcode?.solved || 0)}</p>
+            <p>{formatNumber(leetcodeSolved)}</p>
             <span>{leetcode?.username || 'No LeetCode connected'}</span>
           </div>
           <div className="metric-card">
             <div className="card-icon">🏆</div>
             <h3>Global Rank</h3>
             <p>#{formatNumber(leetcode?.ranking || 0)}</p>
-            <span>LeetCode ranking</span>
+            <span>Current percentile</span>
           </div>
           <div className="metric-card">
             <div className="card-icon">🎯</div>
-            <h3>Active goals</h3>
-            <p>{goals.filter((goal) => !goal.completed).length}</p>
-            <span>Keep pushing!</span>
+            <h3>Success Rate</h3>
+            <p>{Math.round((goals.filter((g) => g.completed).length / (goals.length || 1)) * 100)}%</p>
+            <span>Goal completion rate</span>
           </div>
         </section>
 
-        <section className="chart-section">
-          <Chart data={weekly} />
-        </section>
-
-        <section className="goal-preview">
-          <div className="goals-header">
-            <h2>Goal progress</h2>
-            <p>Track what matters most this week.</p>
+        <section className="dashboard-main-grid">
+          <div className="main-grid-left">
+            <section className="chart-section-premium">
+              <div className="section-header">
+                <h3>Velocity History</h3>
+                <span>Last 7 Days</span>
+              </div>
+              <Chart data={weekly} />
+            </section>
+            
+            {/* Goal Center */}
+            <section className="goal-center-card">
+              <div className="section-header">
+                <h3>Goal Center</h3>
+                <p>Add a new milestone for this week.</p>
+              </div>
+              <form onSubmit={handleAddGoal} className="quick-goal-form">
+                <input 
+                  type="text" 
+                  placeholder="What's the goal? (e.g., Master Tailwind)" 
+                  value={newGoal.title}
+                  onChange={(e) => setNewGoal({...newGoal, title: e.target.value})}
+                  required
+                />
+                <input 
+                  type="text" 
+                  placeholder="Target (e.g., Build 3 projects)" 
+                  value={newGoal.target}
+                  onChange={(e) => setNewGoal({...newGoal, target: e.target.value})}
+                  required
+                />
+                <button type="submit" disabled={isAdding} className="dash-save-btn">
+                  {isAdding ? 'Saving...' : 'Direct Save'}
+                </button>
+              </form>
+            </section>
           </div>
-          <div className="goal-list">
-            {goals.length === 0 ? (
-              <p>No goals yet. Add your first goal in Profile.</p>
-            ) : (
-              goals.slice(0, 3).map((goal) => (
-                <div key={goal._id} className="goal-card">
-                  <div>
-                    <h4>{goal.title}</h4>
-                    <small>{goal.target}</small>
+
+          <div className="main-grid-right">
+            <section className="goal-preview-premium">
+              <div className="section-header">
+                <h3>Live Progress</h3>
+              </div>
+              <div className="goal-list-mini">
+                {goals.length === 0 ? (
+                  <p className="empty-state">No goals in progress. Set one above!</p>
+                ) : (
+                  goals.filter(g => !g.completed).slice(0, 4).map((goal) => (
+                    <div key={goal._id} className="goal-mini-card">
+                      <div className="goal-mini-info">
+                        <h4>{goal.title}</h4>
+                        <span>{goal.progress}%</span>
+                      </div>
+                      <div className="goal-mini-bar">
+                        <div className="goal-mini-fill" style={{ width: `${goal.progress}%` }}></div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </section>
+
+            <section className="skill-tree-preview">
+               <div className="section-header">
+                <h3>Skill Saturation</h3>
+              </div>
+              <div className="skill-bubbles">
+                {github?.language ? (
+                   <div className="skill-bubble primary">
+                    <span>{github.language}</span>
+                    <small>Main Engine</small>
                   </div>
-                  <span>{goal.progress}%</span>
+                ) : (
+                  <p className="empty-state">Connect GitHub to see skills</p>
+                )}
+                <div className="skill-bubble secondary">
+                  <span>Logic</span>
+                  <small>LeetCode</small>
                 </div>
-              ))
-            )}
+              </div>
+            </section>
           </div>
         </section>
         

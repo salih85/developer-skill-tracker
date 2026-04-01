@@ -1055,38 +1055,250 @@
   overflow: hidden;
 }
 
-/* Dashboard Metric Enhancements */
-.card-icon {
-  font-size: 1.5rem;
-  margin-bottom: 12px;
-  background: #f8fafc;
-  width: 48px;
-  height: 48px;
+.repo-footer {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 14px;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #94a3b8;
 }
 
-.gh-card-premium {
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  background: linear-gradient(135deg, #fff 0%, #f5f7ff 100%);
-}
-
-.gh-card-premium:hover {
-  border-color: #6366f1;
-}
-
-.card-footer {
+.dash-premium-header {
+  padding: 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 12px;
+  background: #fff;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
 }
 
-.card-footer small {
-  color: #6366f1;
+.header-left h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
+  color: #0f172a;
+}
+
+.header-left p {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.header-level-card {
+  background: #f8fafc;
+  padding: 20px 24px;
+  border-radius: 20px;
+  width: 280px;
+  border: 1px solid #e2e8f0;
+}
+
+.level-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.level-num {
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #4338ca;
+}
+
+.level-title {
+  font-size: 0.85rem;
   font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.level-progress-bar {
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.level-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header-level-card small {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  padding: 0 32px 32px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.chart-section-premium, 
+.goal-center-card,
+.goal-preview-premium,
+.skill-tree-preview {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  margin-bottom: 24px;
+}
+
+/* Goal Center Styles */
+.quick-goal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-goal-form input {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.quick-goal-form input:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.dash-save-btn {
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.dash-save-btn:hover {
+  opacity: 0.9;
+}
+
+.dash-save-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Live Progress List */
+.goal-list-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.goal-mini-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.goal-mini-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.goal-mini-info h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.goal-mini-info span {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6366f1;
+}
+
+.goal-mini-bar {
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.goal-mini-fill {
+  height: 100%;
+  background: #6366f1;
+  transition: width 0.6s ease;
+}
+
+/* Skill Tree Preview */
+.skill-bubbles {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.skill-bubble {
+  padding: 16px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+
+.skill-bubble.primary {
+  background: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+}
+
+.skill-bubble.secondary {
+  background: #fdf2f8;
+  color: #be185d;
+  border: 1px solid #fbcfe8;
+}
+
+.skill-bubble span {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.skill-bubble small {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.empty-state {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .repo-footer {

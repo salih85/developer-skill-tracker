@@ -50,25 +50,32 @@ const Dashboard = () => {
         {error && <div className="page-error">{error}</div>}
 
         <section className="metric-grid">
-          <div className="metric-card clickable" onClick={() => setIsModalOpen(true)}>
-            <h3>GitHub commits</h3>
+          <div className="metric-card clickable gh-card-premium" onClick={() => setIsModalOpen(true)}>
+            <div className="card-icon">🚀</div>
+            <h3>GitHub Activity</h3>
             <p>{formatNumber(github?.commits || 0)}</p>
-            <span>{github?.username || 'No GitHub connected'}</span>
+            <div className="card-footer">
+              <span>{github?.username || 'No GitHub connected'}</span>
+              <small>View Insights →</small>
+            </div>
           </div>
           <div className="metric-card">
-            <h3>LeetCode solved</h3>
+            <div className="card-icon">🧩</div>
+            <h3>LeetCode fixed</h3>
             <p>{formatNumber(leetcode?.solved || 0)}</p>
             <span>{leetcode?.username || 'No LeetCode connected'}</span>
           </div>
           <div className="metric-card">
-            <h3>Career rank</h3>
-            <p>{formatNumber(leetcode?.ranking || 0)}</p>
-            <span>{leetcode ? 'LeetCode rank' : 'Connect LeetCode'}</span>
+            <div className="card-icon">🏆</div>
+            <h3>Global Rank</h3>
+            <p>#{formatNumber(leetcode?.ranking || 0)}</p>
+            <span>LeetCode ranking</span>
           </div>
           <div className="metric-card">
+            <div className="card-icon">🎯</div>
             <h3>Active goals</h3>
             <p>{goals.filter((goal) => !goal.completed).length}</p>
-            <span>Set a new goal on your profile</span>
+            <span>Keep pushing!</span>
           </div>
         </section>
 

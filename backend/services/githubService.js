@@ -12,22 +12,21 @@ const getGitHubHeaders = () => {
   return headers
 }
 
-const buildWeeklyArray = (events) => {
+const buildActivityArray = (events, daysCount = 7) => {
   const today = new Date()
-  today.setHours(0, 0, 0, 0) // Normalize to start of day local time
+  today.setHours(0, 0, 0, 0)
 
-  const days = [...Array(7)].map((_, index) => {
+  const days = [...Array(daysCount)].map((_, index) => {
     const date = new Date(today)
-    date.setDate(today.getDate() - (6 - index))
+    date.setDate(today.getDate() - (daysCount - 1 - index))
     
-    // We use a simple YYYY-MM-DD string for comparison
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
     const key = `${year}-${month}-${day}`
     
     return {
-      date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+      date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
       key,
       count: 0,
     }
@@ -39,7 +38,6 @@ const buildWeeklyArray = (events) => {
       const dateKey = event.created_at.slice(0, 10)
       const day = days.find((item) => item.key === dateKey)
       if (day) {
-        // Fallback: if size or commits are missing, count as 1 push = at least 1 commit
         const commitCount = event.payload.size || 
                            event.payload.distinct_size || 
                            event.payload.commits?.length || 
@@ -49,7 +47,7 @@ const buildWeeklyArray = (events) => {
     })
   }
 
-  return days.map(({ date, count }) => ({ date, count }))
+  return days
 }
 
 const getGitHubSummary = async (username) => {
@@ -73,7 +71,6 @@ const getGitHubSummary = async (username) => {
   const commits = Array.isArray(events) 
     ? events.reduce((total, event) => {
         if (event.type !== 'PushEvent') return total
-        // Fallback here too
         const commitCount = event.payload.size || 
                            event.payload.distinct_size || 
                            event.payload.commits?.length || 
@@ -92,8 +89,10 @@ const getGitHubSummary = async (username) => {
     bio: profile.bio || '',
     location: profile.location || '',
     blog: profile.blog || '',
+    company: profile.company || '',
+    created_at: profile.created_at,
     commits,
-    events: Array.isArray(events) ? events : [], // Keep events for weekly progress if needed
+    events: Array.isArray(events) ? events : [],
   }
 }
 
@@ -121,8 +120,76 @@ const getGitHubTopRepos = async (username) => {
   }))
 }
 
+const getGitHubLanguageStats = async (username) => {
+  const response = await fetch(
+    `https://api.github.com/users/${username}/repos?per_page=100`,
+    {
+      headers: getGitHubHeaders(),
+    }
+  )
+  const repos = await response.json()
 
-const getGitHubWeeklyProgress = async (username, existingEvents = null) => {
+  if (!response.ok) return []
+
+  const languages = {}
+  repos.forEach((repo) => {
+    if (repo.language) {
+      languages[repo.language] = (languages[repo.language] || 0) + 1
+    }
+  })
+
+  return Object.entries(languages)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5)
+}
+
+const getGitHubRecentActivity = async (username, events = null) => {
+  let activityEvents = events
+  if (!activityEvents) {
+    const response = await fetch(
+      `https://api.github.com/users/${username}/events/public?per_page=20`,
+      {
+        headers: getGitHubHeaders(),
+      }
+    )
+    activityEvents = await response.json()
+  }
+
+  if (!Array.isArray(activityEvents)) return []
+
+  return activityEvents.slice(0, 15).map((event) => {
+    let description = ''
+    switch (event.type) {
+      case 'PushEvent':
+        description = `Pushed ${event.payload.commits?.length || 1} commits stack to ${event.repo.name}`
+        break
+      case 'CreateEvent':
+        description = `Created ${event.payload.ref_type} ${event.payload.ref || ''} in ${event.repo.name}`
+        break
+      case 'WatchEvent':
+        description = `Starred ${event.repo.name}`
+        break
+      case 'PullRequestEvent':
+        description = `${event.payload.action.charAt(0).toUpperCase() + event.payload.action.slice(1)} pull request in ${event.repo.name}`
+        break
+      case 'IssuesEvent':
+        description = `${event.payload.action.charAt(0).toUpperCase() + event.payload.action.slice(1)} issue in ${event.repo.name}`
+        break
+      default:
+        description = `${event.type.replace('Event', '')} in ${event.repo.name}`
+    }
+
+    return {
+      type: event.type,
+      repo: event.repo.name,
+      description,
+      date: event.created_at,
+    }
+  })
+}
+
+const getGitHubActivityHistory = async (username, existingEvents = null) => {
   let events = existingEvents
 
   if (!events) {
@@ -133,49 +200,50 @@ const getGitHubWeeklyProgress = async (username, existingEvents = null) => {
       }
     )
     events = await eventsResponse.json()
-
-    if (!eventsResponse.ok) {
-      throw new Error(events.message || 'Unable to load GitHub activity')
-    }
   }
 
-  return buildWeeklyArray(events)
+  return buildActivityArray(events, 30) // Return 30 days
 }
 
 const getGitHubYearlyStats = async (username) => {
   const currentYear = new Date().getFullYear()
-  const lastYear = currentYear - 1
+  const years = [currentYear, currentYear - 1, currentYear - 2]
 
   const fetchYearlyCount = async (year) => {
-    const response = await fetch(
-      `https://api.github.com/search/commits?q=author:${username}+author-date:${year}-01-01..${year}-12-31`,
-      {
-        headers: {
-          ...getGitHubHeaders(),
-          Accept: 'application/vnd.github.cloak-preview',
-        },
-      }
-    )
-    const data = await response.json()
-    return data.total_count || 0
+    try {
+      const response = await fetch(
+        `https://api.github.com/search/commits?q=author:${username}+author-date:${year}-01-01..${year}-12-31`,
+        {
+          headers: {
+            ...getGitHubHeaders(),
+            Accept: 'application/vnd.github.cloak-preview',
+          },
+        }
+      )
+      const data = await response.json()
+      return data.total_count || 0
+    } catch (e) {
+      return 0
+    }
   }
 
-  const [count2026, count2025] = await Promise.all([
-    fetchYearlyCount(2026),
-    fetchYearlyCount(2025),
-  ])
+  const results = {}
+  await Promise.all(
+    years.map(async (year) => {
+      results[year] = await fetchYearlyCount(year)
+    })
+  )
 
-  return {
-    2026: count2026,
-    2025: count2025,
-  }
+  return results
 }
 
 module.exports = {
   getGitHubSummary,
-  getGitHubWeeklyProgress,
+  getGitHubActivityHistory,
   getGitHubYearlyStats,
   getGitHubTopRepos,
+  getGitHubLanguageStats,
+  getGitHubRecentActivity,
 }
 
 

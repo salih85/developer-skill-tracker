@@ -1,6 +1,13 @@
 const User = require('../models/User')
 const Stats = require('../models/Stats')
-const { getGitHubSummary, getGitHubWeeklyProgress, getGitHubYearlyStats, getGitHubTopRepos } = require('../services/githubService')
+const { 
+  getGitHubSummary, 
+  getGitHubActivityHistory, 
+  getGitHubYearlyStats, 
+  getGitHubTopRepos,
+  getGitHubLanguageStats,
+  getGitHubRecentActivity
+} = require('../services/githubService')
 const { getLeetCodeSummary } = require('../services/leetcodeService')
 
 
@@ -26,7 +33,9 @@ const getOverview = async (req, res, next) => {
         getGitHubSummary(user.githubUsername)
           .then(async (summary) => {
             overview.github = summary
-            overview.weekly = await getGitHubWeeklyProgress(user.githubUsername, summary.events)
+            // For overview, we still just want the last 7 days for the dashboard chart
+            const history = await getGitHubActivityHistory(user.githubUsername, summary.events)
+            overview.weekly = history.slice(-7)
           })
           .catch((err) => console.error('GitHub fetch error:', err.message))
       )
@@ -106,17 +115,19 @@ const getDetailedGitHubStats = async (req, res, next) => {
 
     const results = {
       summary: null,
-      weekly: [],
-      yearly: { 2025: 0, 2026: 0 },
+      history: [],
+      yearly: {},
       repos: [],
+      languages: [],
+      activity: [],
     }
 
     // Fetch summary first to get events if possible
     try {
       results.summary = await getGitHubSummary(user.githubUsername)
-      results.weekly = await getGitHubWeeklyProgress(user.githubUsername, results.summary.events)
+      results.history = await getGitHubActivityHistory(user.githubUsername, results.summary.events)
     } catch (e) {
-      console.error('Summary/Weekly fetch error:', e.message)
+      console.error('Summary/History fetch error:', e.message)
     }
 
     // Fetch yearly separately
@@ -131,6 +142,20 @@ const getDetailedGitHubStats = async (req, res, next) => {
       results.repos = await getGitHubTopRepos(user.githubUsername)
     } catch (e) {
       console.error('Top repos fetch error:', e.message)
+    }
+
+    // Fetch languages
+    try {
+      results.languages = await getGitHubLanguageStats(user.githubUsername)
+    } catch (e) {
+      console.error('Languages fetch error:', e.message)
+    }
+
+    // Fetch recent activity
+    try {
+      results.activity = await getGitHubRecentActivity(user.githubUsername, results.summary?.events)
+    } catch (e) {
+      console.error('Recent activity fetch error:', e.message)
     }
 
     res.json(results)

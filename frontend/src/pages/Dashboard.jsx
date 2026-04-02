@@ -3,6 +3,9 @@ import Navbar from '../components/Navbar.jsx'
 import Sidebar from '../components/Sidebar.jsx'
 import Chart from '../components/Chart.jsx'
 import CommitModal from '../components/CommitModal.jsx'
+import SkillMatrix from '../components/SkillMatrix.jsx'
+import Journal from '../components/Journal.jsx'
+import AchievementBadges from '../components/AchievementBadges.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { getOverview, getGoals, createGoal } from '../services/api.js'
 import { formatNumber } from '../utils/formatData.js'
@@ -190,25 +193,11 @@ const Dashboard = () => {
               </div>
             </section>
 
-            <section className="skill-tree-preview">
-               <div className="section-header">
-                <h3>Skill Saturation</h3>
-              </div>
-              <div className="skill-bubbles">
-                {github?.language ? (
-                   <div className="skill-bubble primary">
-                    <span>{github.language}</span>
-                    <small>Main Engine</small>
-                  </div>
-                ) : (
-                  <p className="empty-state">Connect GitHub to see skills</p>
-                )}
-                <div className="skill-bubble secondary">
-                  <span>Logic</span>
-                  <small>LeetCode</small>
-                </div>
-              </div>
-            </section>
+            <Journal token={token} />
+            
+            <AchievementBadges points={totalPoints} />
+
+            <SkillMatrix token={token} />
           </div>
         </section>
         

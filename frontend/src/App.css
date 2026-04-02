@@ -1360,3 +1360,28 @@
     grid-template-columns: 1fr;
   }
 }
+/* New Feature Styles */
+.achievement-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  cursor: default;
+}
+
+.achievement-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.skill-bubble select:focus {
+  outline: none;
+}
+
+.quick-goal-form select {
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.quick-goal-form select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}

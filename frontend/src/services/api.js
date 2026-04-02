@@ -30,3 +30,14 @@ export const createGoal = (token, goal) => request('/user/goals', 'POST', goal, 
 export const updateGoal = (token, id, goal) => request(`/user/goals/${id}`, 'PUT', goal, token)
 export const deleteGoal = (token, id) => request(`/user/goals/${id}`, 'DELETE', null, token)
 export const getDetailedGitHubStats = (token) => request('/stats/github/detailed', 'GET', null, token)
+
+// Skills
+export const getSkills = (token) => request('/skills', 'GET', null, token)
+export const createSkill = (token, skill) => request('/skills', 'POST', skill, token)
+export const updateSkill = (token, id, skill) => request(`/skills/${id}`, 'PUT', skill, token)
+export const deleteSkill = (token, id) => request(`/skills/${id}`, 'DELETE', null, token)
+
+// Journals
+export const getJournals = (token) => request('/journals', 'GET', null, token)
+export const createJournal = (token, journal) => request('/journals', 'POST', journal, token)
+export const deleteJournal = (token, id) => request(`/journals/${id}`, 'DELETE', null, token)

@@ -62,12 +62,12 @@ const SkillMatrix = ({ token }) => {
   return (
     <section className="skill-tree-preview">
       <div className="section-header">
-        <h3>Skill Matrix</h3>
+        <h3>Expertise Matrix</h3>
         <p>Your technical proficiency across domains.</p>
       </div>
 
-      <form onSubmit={handleAddSkill} className="quick-goal-form" style={{ marginBottom: '24px' }}>
-        <div style={{ display: 'flex', gap: '10px' }}>
+      <form onSubmit={handleAddSkill} className="quick-goal-form" style={{ marginBottom: '32px' }}>
+        <div style={{ display: 'flex', gap: '12px' }}>
           <input
             type="text"
             placeholder="Skill name (e.g. React)"
@@ -83,14 +83,16 @@ const SkillMatrix = ({ token }) => {
                 flex: 1, 
                 padding: '14px', 
                 borderRadius: '14px', 
-                border: '1px solid #e2e8f0',
-                background: '#f8fafc'
+                border: '1px solid var(--glass-border)',
+                background: 'rgba(255,255,255,0.05)',
+                color: 'var(--text-main)',
+                cursor: 'pointer'
             }}
           >
-            {levels.map(l => <option key={l} value={l}>{l}</option>)}
+            {levels.map(l => <option key={l} value={l} style={{ background: '#111', color: '#fff' }}>{l}</option>)}
           </select>
-          <button type="submit" disabled={isAdding} className="dash-save-btn" style={{ padding: '0 20px' }}>
-            {isAdding ? '+' : 'Add'}
+          <button type="submit" disabled={isAdding} className="dash-save-btn" style={{ padding: '0 24px' }}>
+            {isAdding ? '..' : 'ADD'}
           </button>
         </div>
       </form>
@@ -102,42 +104,44 @@ const SkillMatrix = ({ token }) => {
       ) : (
         <div className="skill-bubbles">
           {skills.length === 0 ? (
-            <p className="empty-state">No manual skills added yet.</p>
+            <p className="empty-state">No neural patterns recorded yet.</p>
           ) : (
             skills.map((skill) => (
-              <div key={skill._id} className={`skill-bubble ${skill.level === 'Expert' ? 'primary' : 'secondary'}`} style={{ position: 'relative' }}>
-                <button 
-                  onClick={() => handleDelete(skill._id)}
-                  style={{ 
-                    position: 'absolute', 
-                    top: '5px', 
-                    right: '5px', 
-                    border: 'none', 
-                    background: 'transparent', 
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    opacity: 0.5
-                  }}
-                >
-                  ✕
-                </button>
-                <span>{skill.name}</span>
+              <div key={skill._id} className={`skill-bubble ${skill.level === 'Expert' ? 'primary' : ''}`} style={{ position: 'relative' }}>
+                <span style={{ fontWeight: 700 }}>{skill.name}</span>
                 <select
                   value={skill.level}
                   onChange={(e) => handleUpdateLevel(skill._id, e.target.value)}
                   style={{ 
                     background: 'transparent', 
                     border: 'none', 
-                    fontSize: '0.75rem', 
-                    fontWeight: 600,
+                    fontSize: '0.7rem', 
+                    fontWeight: 800,
                     cursor: 'pointer',
                     color: 'inherit',
                     padding: 0,
-                    marginTop: '4px'
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
                   }}
                 >
-                  {levels.map(l => <option key={l} value={l}>{l}</option>)}
+                  {levels.map(l => <option key={l} value={l} style={{ background: '#111', color: '#fff' }}>{l}</option>)}
                 </select>
+                <button 
+                  onClick={() => handleDelete(skill._id)}
+                  style={{ 
+                    marginLeft: '8px',
+                    border: 'none', 
+                    background: 'transparent', 
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    color: 'rgba(255,255,255,0.3)',
+                    transition: '0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.color = '#ef4444'}
+                  onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.3)'}
+                >
+                  ✕
+                </button>
               </div>
             ))
           )}

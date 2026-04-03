@@ -6,6 +6,9 @@ import CommitModal from '../components/CommitModal.jsx'
 import SkillMatrix from '../components/SkillMatrix.jsx'
 import Journal from '../components/Journal.jsx'
 import AchievementBadges from '../components/AchievementBadges.jsx'
+import DailyQuest from '../components/DailyQuest.jsx'
+import ProjectGallery from '../components/ProjectGallery.jsx'
+import Roadmap from '../components/Roadmap.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { getOverview, getGoals, createGoal } from '../services/api.js'
 import { formatNumber } from '../utils/formatData.js'
@@ -131,7 +134,7 @@ const Dashboard = () => {
           </div>
         </section>
 
-        <section className="dashboard-main-grid">
+        <div className="dashboard-main-grid">
           <div className="main-grid-left">
             <section className="chart-section-premium">
               <div className="section-header">
@@ -140,8 +143,11 @@ const Dashboard = () => {
               </div>
               <Chart data={weekly} />
             </section>
+
+            <Roadmap level={level} />
+
+            <ProjectGallery token={token} />
             
-            {/* Goal Center */}
             <section className="goal-center-card">
               <div className="section-header">
                 <h3>Goal Center</h3>
@@ -170,6 +176,8 @@ const Dashboard = () => {
           </div>
 
           <div className="main-grid-right">
+            <DailyQuest token={token} />
+
             <section className="goal-preview-premium">
               <div className="section-header">
                 <h3>Live Progress</h3>
@@ -199,7 +207,7 @@ const Dashboard = () => {
 
             <SkillMatrix token={token} />
           </div>
-        </section>
+        </div>
         
         <CommitModal 
           isOpen={isModalOpen} 

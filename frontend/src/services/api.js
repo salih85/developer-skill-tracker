@@ -41,3 +41,13 @@ export const deleteSkill = (token, id) => request(`/skills/${id}`, 'DELETE', nul
 export const getJournals = (token) => request('/journals', 'GET', null, token)
 export const createJournal = (token, journal) => request('/journals', 'POST', journal, token)
 export const deleteJournal = (token, id) => request(`/journals/${id}`, 'DELETE', null, token)
+
+// Projects
+export const getProjects = (token) => request('/projects', 'GET', null, token)
+export const createProject = (token, project) => request('/projects', 'POST', project, token)
+export const updateProject = (token, id, project) => request(`/projects/${id}`, 'PUT', project, token)
+export const deleteProject = (token, id) => request(`/projects/${id}`, 'DELETE', null, token)
+
+// Quests
+export const getQuests = (token) => request('/quests', 'GET', null, token)
+export const updateQuest = (token, id) => request(`/quests/${id}`, 'PUT', null, token)

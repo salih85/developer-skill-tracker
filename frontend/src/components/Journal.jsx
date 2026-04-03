@@ -50,29 +50,35 @@ const Journal = ({ token }) => {
   return (
     <section className="goal-preview-premium">
       <div className="section-header">
-        <h3>Daily Journal</h3>
-        <p>Log your daily wins and learnings.</p>
+        <h3>Mission Logs</h3>
+        <p>Record your tactical insights and daily progress.</p>
       </div>
 
-      <form onSubmit={handlePost} className="quick-goal-form" style={{ marginBottom: '20px' }}>
+      <form onSubmit={handlePost} className="quick-goal-form" style={{ marginBottom: '24px' }}>
         <textarea
-          placeholder="What did you learn today?"
+          placeholder="ENTER_LOG_DATA..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
           required
           style={{ 
             width: '100%', 
-            padding: '14px', 
-            borderRadius: '14px', 
-            border: '1px solid #e2e8f0', 
-            background: '#f8fafc',
+            padding: '16px', 
+            borderRadius: '16px', 
+            border: '1px solid var(--glass-border)', 
+            background: 'rgba(255,255,255,0.05)',
+            color: 'var(--text-main)',
             resize: 'none',
-            minHeight: '80px',
-            fontFamily: 'inherit'
+            minHeight: '100px',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.9rem',
+            outline: 'none',
+            transition: '0.3s'
           }}
+          onFocus={(e) => e.target.style.borderColor = 'var(--accent-primary)'}
+          onBlur={(e) => e.target.style.borderColor = 'var(--glass-border)'}
         />
-        <button type="submit" disabled={isPosting} className="dash-save-btn">
-          {isPosting ? 'Posting...' : 'Log Activity'}
+        <button type="submit" disabled={isPosting} className="dash-save-btn" style={{ marginTop: '12px', width: '100%' }}>
+          {isPosting ? 'UPLOADING...' : 'SAVE_LOG_ENTRY'}
         </button>
       </form>
 
@@ -81,18 +87,20 @@ const Journal = ({ token }) => {
       ) : (
         <div className="activity-list">
           {journals.length === 0 ? (
-            <p className="empty-state">No entries yet. Start logging!</p>
+            <p className="empty-state">No logs detected in the local database.</p>
           ) : (
             journals.map((entry) => (
-              <div key={entry._id} className="activity-item">
-                <div className="activity-dot"></div>
+              <div key={entry._id} className="activity-item glass-card" style={{ padding: '1rem', border: '1px solid var(--glass-border)', marginBottom: '10px' }}>
+                <div className="activity-dot" style={{ background: 'var(--accent-neon)' }}></div>
                 <div className="activity-content" style={{ flex: 1 }}>
-                  <p style={{ color: '#1e293b', fontWeight: 500, fontSize: '0.9rem' }}>{entry.content}</p>
-                  <p>{new Date(entry.date).toLocaleDateString()} • {new Date(entry.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                  <p style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: '0.9rem', marginBottom: '4px' }}>{entry.content}</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
+                    {new Date(entry.date).toLocaleDateString()} // {new Date(entry.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
                 </div>
                 <button 
                   onClick={() => handleDelete(entry._id)}
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', opacity: 0.3 }}
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '14px' }}
                 >
                   ✕
                 </button>

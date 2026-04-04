@@ -17,48 +17,16 @@ const Roadmap = ({ level }) => {
         <h3>Growth Roadmap</h3>
         <p>Next major milestone: <strong>{nextMilestone ? nextMilestone.title : 'Max Level Reached'}</strong></p>
       </div>
-      <div style={{ position: 'relative', padding: '20px 0' }}>
-        <div style={{ 
-          position: 'absolute', 
-          top: '50%', 
-          left: 0, 
-          right: 0, 
-          height: '4px', 
-          background: 'rgba(255,255,255,0.05)', 
-          zIndex: 0 
-        }}></div>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          position: 'relative', 
-          zIndex: 1 
-        }}>
+      <div className="roadmap-container">
+        <div className="roadmap-line"></div>
+        <div className="roadmap-nodes">
           {milestones.map((m, idx) => (
-            <div key={idx} style={{ textAlign: 'center', flex: 1 }}>
-              <div style={{ 
-                width: '16px', 
-                height: '16px', 
-                borderRadius: '50%', 
-                background: level >= m.lvl ? 'var(--accent-primary)' : '#333',
-                margin: '0 auto 10px',
-                boxShadow: level >= m.lvl ? '0 0 10px var(--accent-primary)' : 'none',
-                border: '3px solid var(--bg-card)'
-              }}></div>
-              <small style={{ 
-                display: 'block', 
-                fontSize: '0.7rem', 
-                fontWeight: 700, 
-                color: level >= m.lvl ? 'var(--text-main)' : 'var(--text-muted)' 
-              }}>
+            <div key={idx} className="milestone-node">
+              <div className={`node-dot ${level >= m.lvl ? 'active' : ''}`}></div>
+              <small className={`milestone-lvl ${level >= m.lvl ? 'active' : ''}`}>
                 Lv {m.lvl}
               </small>
-              <span style={{ 
-                fontSize: '0.65rem', 
-                color: 'var(--text-muted)', 
-                display: 'block',
-                maxWidth: '60px',
-                margin: '4px auto 0'
-              }}>
+              <span className="milestone-title">
                 {m.title}
               </span>
             </div>

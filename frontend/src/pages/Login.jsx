@@ -37,48 +37,81 @@ const Login = () => {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1>{isRegister ? 'Create your account' : 'Sign in'}</h1>
-        <p>{isRegister ? 'Track GitHub and LeetCode progress in one place.' : 'Welcome back to Skill Tracker.'}</p>
+        <header className="auth-header">
+          <h1>{isRegister ? 'Begin Your Odyssey' : 'System Access'}</h1>
+          <p>{isRegister ? 'Initialize your developer profile and sync your progress.' : 'Welcome back, Architect. Authenticate to proceed.'}</p>
+        </header>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="auth-form">
           {isRegister && (
             <label>
-              Name
-              <input name="name" value={form.name} onChange={handleChange} />
+              Full Name
+              <input 
+                name="name" 
+                placeholder="e.g. John Doe"
+                value={form.name} 
+                onChange={handleChange} 
+                required
+              />
             </label>
           )}
 
           <label>
-            Email
-            <input name="email" type="email" value={form.email} onChange={handleChange} />
+            Email Address
+            <input 
+              name="email" 
+              type="email" 
+              placeholder="name@company.com"
+              value={form.email} 
+              onChange={handleChange} 
+              required
+            />
           </label>
 
           <label>
-            Password
-            <input name="password" type="password" value={form.password} onChange={handleChange} />
+            Access Password
+            <input 
+              name="password" 
+              type="password" 
+              placeholder="••••••••"
+              value={form.password} 
+              onChange={handleChange} 
+              required
+            />
           </label>
 
           {isRegister && (
-            <>
+            <div className="form-row">
               <label>
-                GitHub username
-                <input name="githubUsername" value={form.githubUsername} onChange={handleChange} />
+                GitHub Username
+                <input 
+                  name="githubUsername" 
+                  placeholder="octocat"
+                  value={form.githubUsername} 
+                  onChange={handleChange} 
+                />
               </label>
               <label>
-                LeetCode username
-                <input name="leetcodeUsername" value={form.leetcodeUsername} onChange={handleChange} />
+                LeetCode ID
+                <input 
+                  name="leetcodeUsername" 
+                  placeholder="lc_user"
+                  value={form.leetcodeUsername} 
+                  onChange={handleChange} 
+                />
               </label>
-            </>
+            </div>
           )}
 
-          {error && <div className="form-error">{error}</div>}
+          {error && <div className="page-error" style={{ marginBottom: '1.5rem' }}>{error}</div>}
+          
           <button className="primary-button" type="submit">
-            {isRegister ? 'Register' : 'Login'}
+            {isRegister ? 'Initialize Profile' : 'Authenticate'}
           </button>
         </form>
 
         <button className="text-button" type="button" onClick={() => setIsRegister(!isRegister)}>
-          {isRegister ? 'Already have an account? Login' : "Don't have an account? Register"}
+          {isRegister ? 'Already have an account? Sign in' : "New architect? Create an account"}
         </button>
       </div>
     </div>

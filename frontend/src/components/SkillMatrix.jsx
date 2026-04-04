@@ -67,7 +67,7 @@ const SkillMatrix = ({ token }) => {
       </div>
 
       <form onSubmit={handleAddSkill} className="quick-goal-form" style={{ marginBottom: '32px' }}>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div className="quick-goal-row">
           <input
             type="text"
             placeholder="Skill name (e.g. React)"
@@ -79,19 +79,11 @@ const SkillMatrix = ({ token }) => {
           <select
             value={newSkill.level}
             onChange={(e) => setNewSkill({ ...newSkill, level: e.target.value })}
-            style={{ 
-                flex: 1, 
-                padding: '14px', 
-                borderRadius: '14px', 
-                border: '1px solid var(--glass-border)',
-                background: 'rgba(255,255,255,0.05)',
-                color: 'var(--text-main)',
-                cursor: 'pointer'
-            }}
+            style={{ flex: 1 }}
           >
             {levels.map(l => <option key={l} value={l} style={{ background: '#111', color: '#fff' }}>{l}</option>)}
           </select>
-          <button type="submit" disabled={isAdding} className="dash-save-btn" style={{ padding: '0 24px' }}>
+          <button type="submit" disabled={isAdding} className="dash-save-btn">
             {isAdding ? '..' : 'ADD'}
           </button>
         </div>
@@ -107,38 +99,18 @@ const SkillMatrix = ({ token }) => {
             <p className="empty-state">No neural patterns recorded yet.</p>
           ) : (
             skills.map((skill) => (
-              <div key={skill._id} className={`skill-bubble ${skill.level === 'Expert' ? 'primary' : ''}`} style={{ position: 'relative' }}>
-                <span style={{ fontWeight: 700 }}>{skill.name}</span>
+              <div key={skill._id} className={`skill-bubble ${skill.level === 'Expert' ? 'primary' : ''}`}>
+                <span className="skill-name">{skill.name}</span>
                 <select
                   value={skill.level}
                   onChange={(e) => handleUpdateLevel(skill._id, e.target.value)}
-                  style={{ 
-                    background: 'transparent', 
-                    border: 'none', 
-                    fontSize: '0.7rem', 
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    color: 'inherit',
-                    padding: 0,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}
                 >
                   {levels.map(l => <option key={l} value={l} style={{ background: '#111', color: '#fff' }}>{l}</option>)}
                 </select>
                 <button 
                   onClick={() => handleDelete(skill._id)}
-                  style={{ 
-                    marginLeft: '8px',
-                    border: 'none', 
-                    background: 'transparent', 
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    color: 'rgba(255,255,255,0.3)',
-                    transition: '0.2s'
-                  }}
-                  onMouseOver={(e) => e.target.style.color = '#ef4444'}
-                  onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.3)'}
+                  className="delete-skill-btn"
+                  title="Remove Skill"
                 >
                   ✕
                 </button>

@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Sidebar from '../components/Sidebar.jsx'
 import Chart from '../components/Chart.jsx'
-import CommitModal from '../components/CommitModal.jsx'
 import SkillMatrix from '../components/SkillMatrix.jsx'
 import Journal from '../components/Journal.jsx'
 import AchievementBadges from '../components/AchievementBadges.jsx'
 import DailyQuest from '../components/DailyQuest.jsx'
 import ProjectGallery from '../components/ProjectGallery.jsx'
 import Roadmap from '../components/Roadmap.jsx'
+import GitHubStatsSection from '../components/GitHubStatsSection.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { getOverview, getGoals, createGoal } from '../services/api.js'
 import { formatNumber } from '../utils/formatData.js'
@@ -24,6 +24,12 @@ const Dashboard = () => {
   // Goal Center state
   const [newGoal, setNewGoal] = useState({ title: '', target: '' })
   const [isAdding, setIsAdding] = useState(false)
+  
+  const githubStatsRef = useRef(null)
+
+  const scrollToGithub = () => {
+    githubStatsRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   const loadData = async () => {
     try {
@@ -105,7 +111,7 @@ const Dashboard = () => {
         {success && <div className="info-message">{success}</div>}
 
         <section className="metric-grid">
-          <div className="metric-card clickable gh-card-premium" onClick={() => setIsModalOpen(true)}>
+          <div className="metric-card clickable gh-card-premium" onClick={scrollToGithub}>
             <div className="card-icon">🚀</div>
             <h3>GitHub Activity</h3>
             <p>{formatNumber(totalCommits)}</p>
@@ -154,20 +160,22 @@ const Dashboard = () => {
                 <p>Add a new milestone for this week.</p>
               </div>
               <form onSubmit={handleAddGoal} className="quick-goal-form">
-                <input 
-                  type="text" 
-                  placeholder="What's the goal? (e.g., Master Tailwind)" 
-                  value={newGoal.title}
-                  onChange={(e) => setNewGoal({...newGoal, title: e.target.value})}
-                  required
-                />
-                <input 
-                  type="text" 
-                  placeholder="Target (e.g., Build 3 projects)" 
-                  value={newGoal.target}
-                  onChange={(e) => setNewGoal({...newGoal, target: e.target.value})}
-                  required
-                />
+                <div className="quick-goal-row">
+                  <input 
+                    type="text" 
+                    placeholder="What's the goal? (e.g., Master Tailwind)" 
+                    value={newGoal.title}
+                    onChange={(e) => setNewGoal({...newGoal, title: e.target.value})}
+                    required
+                  />
+                  <input 
+                    type="text" 
+                    placeholder="Target (e.g., Build 3 projects)" 
+                    value={newGoal.target}
+                    onChange={(e) => setNewGoal({...newGoal, target: e.target.value})}
+                    required
+                  />
+                </div>
                 <button type="submit" disabled={isAdding} className="dash-save-btn">
                   {isAdding ? 'Saving...' : 'Direct Save'}
                 </button>
@@ -208,12 +216,8 @@ const Dashboard = () => {
             <SkillMatrix token={token} />
           </div>
         </div>
-        
-        <CommitModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          token={token} 
-        />
+
+        <GitHubStatsSection token={token} sectionRef={githubStatsRef} />
       </div>
     </div>
   )

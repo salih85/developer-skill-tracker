@@ -1,8 +1,6 @@
 const Project = require('../models/Project')
 
-// @desc    Get all user projects
-// @route   GET /api/projects
-// @access  Private
+
 const getProjects = async (req, res, next) => {
   try {
     const projects = await Project.find({ user: req.user.id }).sort({ createdAt: -1 })
@@ -12,9 +10,7 @@ const getProjects = async (req, res, next) => {
   }
 }
 
-// @desc    Create a new project
-// @route   POST /api/projects
-// @access  Private
+
 const createProject = async (req, res, next) => {
   try {
     const { title, description, techStack, status, link, githubUrl, imageUrl } = req.body
@@ -40,9 +36,7 @@ const createProject = async (req, res, next) => {
   }
 }
 
-// @desc    Update a project
-// @route   PUT /api/projects/:id
-// @access  Private
+
 const updateProject = async (req, res, next) => {
   try {
     const project = await Project.findOne({ _id: req.params.id, user: req.user.id })
@@ -67,9 +61,7 @@ const updateProject = async (req, res, next) => {
   }
 }
 
-// @desc    Delete a project
-// @route   DELETE /api/projects/:id
-// @access  Private
+
 const deleteProject = async (req, res, next) => {
   try {
     const project = await Project.findOne({ _id: req.params.id, user: req.user.id })

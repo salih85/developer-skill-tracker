@@ -21,14 +21,16 @@ const Dashboard = () => {
   const [success, setSuccess] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   
-  // Goal Center state
-  const [newGoal, setNewGoal] = useState({ title: '', target: '' })
-  const [isAdding, setIsAdding] = useState(false)
-  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const githubStatsRef = useRef(null)
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen)
+  }
 
   const scrollToGithub = () => {
     githubStatsRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (isSidebarOpen) setIsSidebarOpen(false)
   }
 
   const loadData = async () => {
@@ -85,10 +87,10 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="page-layout">
-      <Sidebar />
+    <div className={`page-layout ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="main-panel">
-        <Navbar />
+        <Navbar onToggle={toggleSidebar} />
         
         <header className="dash-premium-header">
           <div className="header-left">

@@ -25,7 +25,7 @@ const getOverview = async (req, res, next) => {
       weekly: [],
     }
 
-    // Use Promise.allSettled to handle partial failures
+    
     const tasks = []
 
     if (user.githubUsername) {
@@ -33,7 +33,7 @@ const getOverview = async (req, res, next) => {
         getGitHubSummary(user.githubUsername)
           .then(async (summary) => {
             overview.github = summary
-            // For overview, we still just want the last 7 days for the dashboard chart
+ 
             const history = await getGitHubActivityHistory(user.githubUsername, summary.events)
             overview.weekly = history.slice(-7)
           })
@@ -53,7 +53,7 @@ const getOverview = async (req, res, next) => {
 
     await Promise.all(tasks)
 
-    // Update stats record if possible, but don't block if it fails
+
     try {
       await Stats.findOneAndUpdate(
         { user: req.user.id },
@@ -122,7 +122,7 @@ const getDetailedGitHubStats = async (req, res, next) => {
       activity: [],
     }
 
-    // Fetch summary first to get events if possible
+
     try {
       results.summary = await getGitHubSummary(user.githubUsername)
       results.history = await getGitHubActivityHistory(user.githubUsername, results.summary.events)
@@ -130,28 +130,28 @@ const getDetailedGitHubStats = async (req, res, next) => {
       console.error('Summary/History fetch error:', e.message)
     }
 
-    // Fetch yearly separately
+ 
     try {
       results.yearly = await getGitHubYearlyStats(user.githubUsername)
     } catch (e) {
       console.error('Yearly fetch error:', e.message)
     }
 
-    // Fetch top repos
+
     try {
       results.repos = await getGitHubTopRepos(user.githubUsername)
     } catch (e) {
       console.error('Top repos fetch error:', e.message)
     }
 
-    // Fetch languages
+  
     try {
       results.languages = await getGitHubLanguageStats(user.githubUsername)
     } catch (e) {
       console.error('Languages fetch error:', e.message)
     }
 
-    // Fetch recent activity
+
     try {
       results.activity = await getGitHubRecentActivity(user.githubUsername, results.summary?.events)
     } catch (e) {

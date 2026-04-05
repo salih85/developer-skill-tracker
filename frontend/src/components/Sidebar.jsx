@@ -1,32 +1,38 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { user } = useAuth()
   const location = useLocation()
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-brand">ANTIGRAVITY</div>
-      
-      <div className="sidebar-summary">
-        <p>Telemetry Node</p>
-        <h3>{user?.name || 'Developer'}</h3>
-        <small>{user?.email}</small>
-      </div>
+    <>
+      <div className={`sidebar-overlay ${isOpen ? 'show' : ''}`} onClick={onClose}></div>
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="sidebar-brand">ANTIGRAVITY</div>
+          <button className="sidebar-close" onClick={onClose}>×</button>
+        </div>
+        
+        <div className="sidebar-summary">
+          <p>Telemetry Node</p>
+          <h3>{user?.name || 'Developer'}</h3>
+          <small>{user?.email}</small>
+        </div>
 
-      <div className="sidebar-links">
-        <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
-          <span>❖</span> Overview
-        </Link>
-        <Link to="/profile" className={location.pathname === '/profile' ? 'active' : ''}>
-          <span>⌬</span> Goal Center
-        </Link>
-        <Link to="/projects" className={location.pathname === '/projects' ? 'active' : ''}>
-          <span>⌘</span> Projects
-        </Link>
-      </div>
-    </aside>
+        <div className="sidebar-links">
+          <Link to="/" className={location.pathname === '/' ? 'active' : ''} onClick={onClose}>
+            <span>❖</span> Overview
+          </Link>
+          <Link to="/profile" className={location.pathname === '/profile' ? 'active' : ''} onClick={onClose}>
+            <span>⌬</span> Goal Center
+          </Link>
+          <Link to="/" className={location.pathname === '/projects' ? 'active' : ''} onClick={onClose}>
+            <span>⌘</span> Projects
+          </Link>
+        </div>
+      </aside>
+    </>
   )
 }
 

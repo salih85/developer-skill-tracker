@@ -1,8 +1,6 @@
 const Quest = require('../models/Quest')
 
-// @desc    Get today's quests for user
-// @route   GET /api/quests
-// @access  Private
+
 const getQuests = async (req, res, next) => {
   try {
     const today = new Date()
@@ -13,7 +11,7 @@ const getQuests = async (req, res, next) => {
       date: { $gte: today } 
     })
 
-    // If no quests for today, create some defaults
+  
     if (quests.length === 0) {
       const defaultQuests = [
         { title: 'Code Warrior', description: 'Make at least 3 commits today', points: 15 },
@@ -32,9 +30,7 @@ const getQuests = async (req, res, next) => {
   }
 }
 
-// @desc    Toggle quest completion
-// @route   PUT /api/quests/:id
-// @access  Private
+
 const updateQuest = async (req, res, next) => {
   try {
     const quest = await Quest.findOne({ _id: req.params.id, user: req.user.id })

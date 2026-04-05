@@ -3,7 +3,7 @@ const { getGitHubWeeklyProgress } = require('../services/githubService');
 async function verify() {
     console.log('--- Verifying buildWeeklyArray Logic ---');
     
-    // Mock events
+
     const today = new Date().toISOString().slice(0, 10);
     const mockEvents = [
         {

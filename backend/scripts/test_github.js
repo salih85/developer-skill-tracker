@@ -1,7 +1,7 @@
 const { getGitHubSummary, getGitHubWeeklyProgress } = require('../services/githubService');
 
 async function test() {
-    const username = 'salih85'; // Using salih85 for verification
+    const username = 'salih85'; 
 
     try {
         console.log('Fetching summary for:', username);

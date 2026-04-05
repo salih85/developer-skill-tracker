@@ -1,8 +1,6 @@
 const Skill = require('../models/Skill')
 
-// @desc    Get all user skills
-// @route   GET /api/skills
-// @access  Private
+
 const getSkills = async (req, res, next) => {
   try {
     const skills = await Skill.find({ user: req.user.id }).sort({ level: -1 })
@@ -12,9 +10,7 @@ const getSkills = async (req, res, next) => {
   }
 }
 
-// @desc    Create a new skill
-// @route   POST /api/skills
-// @access  Private
+
 const createSkill = async (req, res, next) => {
   try {
     const { name, level, category } = req.body
@@ -36,9 +32,7 @@ const createSkill = async (req, res, next) => {
   }
 }
 
-// @desc    Update a skill
-// @route   PUT /api/skills/:id
-// @access  Private
+
 const updateSkill = async (req, res, next) => {
   try {
     const skill = await Skill.findOne({ _id: req.params.id, user: req.user.id })
@@ -59,9 +53,7 @@ const updateSkill = async (req, res, next) => {
   }
 }
 
-// @desc    Delete a skill
-// @route   DELETE /api/skills/:id
-// @access  Private
+
 const deleteSkill = async (req, res, next) => {
   try {
     const skill = await Skill.findOne({ _id: req.params.id, user: req.user.id })

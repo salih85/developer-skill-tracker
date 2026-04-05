@@ -60,7 +60,7 @@ const getGitHubSummary = async (username) => {
     throw new Error(profile.message || 'GitHub profile not found')
   }
 
-  // Fetch current year commit count from Search API for accuracy
+
   const currentYear = new Date().getFullYear()
   const searchResponse = await fetch(
     `https://api.github.com/search/commits?q=author:${username}+author-date:${currentYear}-01-01..${currentYear}-12-31`,
@@ -94,7 +94,7 @@ const getGitHubSummary = async (username) => {
     blog: profile.blog || '',
     company: profile.company || '',
     created_at: profile.created_at,
-    commits: yearlyCommits, // Use total commits for current year
+    commits: yearlyCommits,
     events: Array.isArray(events) ? events : [],
   }
 }

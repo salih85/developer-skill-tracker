@@ -1,8 +1,6 @@
 const Journal = require('../models/Journal')
 
-// @desc    Get all user journal entries
-// @route   GET /api/journals
-// @access  Private
+
 const getJournals = async (req, res, next) => {
   try {
     const journals = await Journal.find({ user: req.user.id }).sort({ date: -1 })
@@ -12,9 +10,7 @@ const getJournals = async (req, res, next) => {
   }
 }
 
-// @desc    Create a new journal entry
-// @route   POST /api/journals
-// @access  Private
+
 const createJournal = async (req, res, next) => {
   try {
     const { content, date } = req.body
@@ -35,9 +31,7 @@ const createJournal = async (req, res, next) => {
   }
 }
 
-// @desc    Delete a journal entry
-// @route   DELETE /api/journals/:id
-// @access  Private
+
 const deleteJournal = async (req, res, next) => {
   try {
     const journal = await Journal.findOne({ _id: req.params.id, user: req.user.id })

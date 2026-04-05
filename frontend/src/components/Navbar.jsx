@@ -1,16 +1,23 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 
-const Navbar = () => {
+const Navbar = ({ onToggle }) => {
   const { logout, user } = useAuth()
 
   return (
     <nav className="navbar">
-      <div className="brand">SKILL_TRACKER</div>
+      <div className="navbar-left">
+        <button className="mobile-toggle" onClick={onToggle}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div className="brand">SKILL_TRACKER</div>
+      </div>
       
       <div className="nav-links">
-        <Link to="/">Terminal</Link>
-        <Link to="/profile">Identity</Link>
+        <Link to="/" className="nav-item">Terminal</Link>
+        <Link to="/profile" className="nav-item">Identity</Link>
         <div className="user-chip">{user?.name || 'Developer'}</div>
         <button className="logout-button" onClick={logout}>
           DISCONNECT

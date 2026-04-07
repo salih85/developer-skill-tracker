@@ -22,6 +22,8 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [newGoal, setNewGoal] = useState({ title: '', target: '' })
+  const [isAdding, setIsAdding] = useState(false)
   const githubStatsRef = useRef(null)
 
   const toggleSidebar = () => {
@@ -80,10 +82,10 @@ const Dashboard = () => {
   const progressToNext = (totalPoints % 100)
 
   const getRankTitle = (lvl) => {
-    if (lvl < 5) return 'Junior Dev'
-    if (lvl < 10) return 'Solid Contributor'
-    if (lvl < 20) return 'Senior Architect'
-    return 'Fullstack Legend'
+    if (lvl < 5) return 'NEOPHYTE'
+    if (lvl < 10) return 'OPERATOR'
+    if (lvl < 20) return 'ARCHITECT'
+    return 'SINGULARITY'
   }
 
   return (
@@ -94,8 +96,8 @@ const Dashboard = () => {
         
         <header className="dash-premium-header">
           <div className="header-left">
-            <h1>Engine Room</h1>
-            <p>Welcome back, <strong>{user?.name || 'Developer'}</strong>. Your systems are nominal.</p>
+            <h1>Skill Tracker</h1>
+            <p>Welcome back, <strong>{user?.name || 'User'}</strong>. Your progress is being synchronized.</p>
           </div>
           <div className="header-level-card">
             <div className="level-info">

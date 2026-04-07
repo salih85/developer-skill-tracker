@@ -1,8 +1,12 @@
-# 🚀 Skill Tracker: The Ultimate Developer Dashboard
+# 🚀 Skill Tracker
+<p align="left">
+  <strong><em>Premium glassmorphic dashboard for real-time GitHub & LeetCode performance tracking.</em></strong><br/>
+  <small>The high-performance command center for tracking developer velocity and growth.</small>
+</p>
 
-Skill Tracker is a high-performance, premium developer dashboard designed to aggregate your coding activity from GitHub and LeetCode. Monitor your progress, track milestones, and visualize your evolution as a software engineer in real-time.
+---
 
-![Skill Tracker Dashboard](https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=2070)
+![Skill Tracker Preview](https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=2070)
 
 ## ✨ Core Features
 

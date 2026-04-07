@@ -12,7 +12,7 @@ const Navbar = ({ onToggle }) => {
           <span></span>
           <span></span>
         </button>
-        <div className="brand">SKILL_TRACKER</div>
+        <div className="brand">Skill Tracker</div>
       </div>
       
       <div className="nav-links">

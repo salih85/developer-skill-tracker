@@ -1,17 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg-dark: #0a0a0c;
-  --bg-card: rgba(23, 23, 26, 0.7);
-  --bg-sidebar: #111114;
-  --accent-primary: #6366f1; /* Indigo */
-  --accent-secondary: #a855f7; /* Purple */
+  --bg-dark: #050505;
+  --bg-card: rgba(15, 15, 18, 0.8);
+  --bg-sidebar: #0a0a0c;
+  --accent-primary: #8b5cf6; 
+  --accent-secondary: #d946ef; 
   --accent-neon: #00f2ff;
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --accent-success: #10b981;
+  --text-main: #f8fafc;
+  --text-muted: #64748b;
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --grad-premium: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
 }
 
 * {
@@ -33,7 +35,7 @@ code, pre {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Glassmorphism Utilities */
+
 .glass-panel {
   background: var(--bg-card);
   backdrop-filter: blur(12px);
@@ -56,7 +58,7 @@ code, pre {
   transform: translateY(-4px);
 }
 
-/* Scrollbar Styling */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -84,4 +86,195 @@ button {
   border: none;
   outline: none;
   font-family: inherit;
+}
+
+
+.chart-card {
+  padding: 1.5rem;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chart-header .header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-badge {
+  background: var(--bg-dark);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  border: 1px solid var(--glass-border);
+  color: var(--accent-neon);
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  height: 200px;
+  align-items: flex-end;
+}
+
+.chart-bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+}
+
+.bar-wrapper {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.chart-bar {
+  width: 100%;
+  max-width: 40px;
+  border-radius: 8px 8px 4px 4px;
+  transition: var(--transition-smooth);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 8px;
+}
+
+.chart-bar:hover {
+  filter: brightness(1.2);
+  transform: scaleX(1.05);
+}
+
+.bar-value {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.bar-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Daily Quest Premium */
+.daily-quest-premium {
+  padding: 1.5rem;
+  border-radius: 24px;
+}
+
+.daily-quest-premium .section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.header-icon {
+  font-size: 1.5rem;
+  background: var(--grad-premium);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.xp-total {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--accent-neon);
+  font-size: 0.85rem;
+}
+
+.quest-grid-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quest-mini-card {
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.quest-mini-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+.quest-header-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.quest-status-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+}
+
+.quest-mini-card.is-completed .quest-status-bullet {
+  background: var(--accent-success);
+  box-shadow: 0 0 8px var(--accent-success);
+}
+
+.quest-header-mini h4 {
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.xp-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-secondary);
+}
+
+.quest-desc-mini {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-left: 14px;
+}
+
+.quest-progress-mini {
+  margin-top: 10px;
+  margin-left: 14px;
+}
+
+.progress-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--grad-premium);
+  transition: width 0.5s ease-in-out;
+}
+
+.quest-mini-card.is-completed {
+  opacity: 0.7;
+}
+
+.quest-mini-card.is-completed h4 {
+  text-decoration: line-through;
+  color: var(--text-muted);
 }

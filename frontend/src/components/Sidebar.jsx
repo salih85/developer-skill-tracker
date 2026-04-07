@@ -10,8 +10,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       <div className={`sidebar-overlay ${isOpen ? 'show' : ''}`} onClick={onClose}></div>
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <div className="sidebar-brand">ANTIGRAVITY</div>
-          <button className="sidebar-close" onClick={onClose}>×</button>
+          <div className="sidebar-brand">Skill Tracker</div>
         </div>
         
         <div className="sidebar-summary">
